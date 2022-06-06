@@ -1,0 +1,162 @@
+const form = document.getElementById('my-form');
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        let error = formValidate(form),
+            select = document.querySelector('select'),
+            lang = select.value,
+            overlay = document.getElementById('overlay'),
+            modal = document.getElementById('modal'),
+            sending = document.getElementById('sending'),
+            close = document.getElementById('close-contact'),
+            errorVallid=document.getElementById('error'),
+            btnError = document.getElementById('btn-error'),
+            formData = new FormData(form);
+
+       if(error == 0) {
+            overlay.classList.add('_sending');
+            sending.classList.add('_sending');
+            var req = new XMLHttpRequest();
+            req.open('POST', 'sendmail.php', true);
+            req.onload = function() {
+                if (req.status >= 200 && req.status < 400) {
+                json = JSON.parse(this.response);
+                    if (json.result == "success") {
+                        form.reset();
+                        sending.classList.remove('_sending');
+                        modal.classList.add('_sending');
+                        close.classList.add('_sending');
+                    } else {
+                        alert("Ошибка. Сообщение не отправлено");
+                        overlay.classList.remove('_sending');
+                        modal.classList.remove('_sending');
+                        sending.classList.remove('_sending');
+                        }
+                } else {
+                    overlay.classList.remove('_sending');
+                    modal.classList.remove('_sending');
+                    sending.classList.remove('_sending');
+                    close.classList.remove('_sending');
+                    alert("Ошибка сервера. Номер: "+req.status);
+                }}; 
+                    req.onerror = function() {alert("Ошибка отправки запроса");};
+                    req.send(new FormData(e.target));
+        } else if (error > 0) {
+            overlay.classList.add('_sending');
+            errorVallid.classList.add('_sending');
+        } else {
+            overlay.classList.remove('_sending');
+            errorVallid.classList.remove('_sending');
+        }
+
+        function formValidate(form) {
+            let error = 0,
+                formReq = document.querySelectorAll('._req'),
+                select = document.querySelector('select'),
+                lang = select.value,
+                name = document.getElementById('span-name'),
+                email = document.getElementById('span-email'),
+                text = document.getElementById('span-text'),
+                checkbox = document.getElementById('checkbox');
+    
+            for (let index = 0; index < formReq.length; index++) {
+                const input = formReq[index];
+                formRemoveError(input);
+
+                if (input.classList.contains('_name')) {
+                    if ((input.value == '') && (lang == 'ru')) {
+                        formAddError(input);
+                        name.innerHTML = "Пожалуйста введите свое имя";
+                        error++;
+                    } else if ((input.value == '') && (lang == 'en')) {
+                        formAddError(input);
+                        name.innerHTML = "Please enter your name";
+                        error++;
+                    } else if ((nameTest(input)) && (lang == 'ru')) {
+                        formAddError(input);
+                        name.innerHTML = "Имя может содержать только буквы";
+                        error++;
+                    } else if ((nameTest(input)) && (lang == 'en')) {
+                        formAddError(input);
+                        name.innerHTML = "The name can contain only letters";
+                        error++;
+                    } else {
+                        formRemoveError(input);
+                        name.innerHTML = "";
+                    }
+                } else if (input.classList.contains('_email')) {
+                    
+                    if ((input.value == '') && (lang == 'ru')) {
+                        formAddError(input);
+                        email.innerHTML = "Пожалуйста введите свой email";
+                        error++;
+                    } else if ((input.value == '') && (lang == 'en')) {
+                        formAddError(input);
+                        email.innerHTML = "Please enter your email";
+                        error++;
+                    } else if ((emailTest(input)) && (lang == 'ru')) {
+                        formAddError(input);
+                        email.innerHTML = "Пожалуйста введите корректный email";
+                        error++;
+                    }  else if ((emailTest(input)) && (lang == 'en')) {
+                        formAddError(input);
+                        email.innerHTML = "Please enter a valid email";
+                        error++;
+                    } else {
+                        formRemoveError(input);
+                        email.innerHTML = "";
+                    }
+                   
+                } else if (input.classList.contains('_text')) {
+                    if ((input.value == '') && (lang == 'ru')) {
+                        formAddError(input);
+                        text.innerHTML = "Ну что же вы не стисняйтесь. Я все еще жду вашего сообщения";
+                        error++;
+                    } else if ((input.value == '') && (lang == 'en')) {
+                        formAddError(input);
+                        text.innerHTML = "Come on, don't be shy. I'm still waiting for your message";
+                        error++;
+                    } else {
+                        formRemoveError(input);
+                        text.innerHTML = "";
+                    }
+                } else if (checkbox) {
+                    if (checkbox.checked) {
+                        formRemoveError(input);
+                    } else {
+                        formAddError(input);
+                        error++; 
+                    }
+                } else{
+                    formRemoveError(input);
+                }
+            }
+
+            return error;
+        }
+    
+        function formAddError(input) {
+            input.parentElement.classList.add('_error');
+            input.classList.add('_error');
+        }
+    
+        function formRemoveError(input) {
+            input.parentElement.classList.remove('_error');
+            input.classList.remove('_error');
+        }
+    
+        function emailTest(input) {
+            return !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value);
+        }
+
+        function nameTest(input) {
+            return !/^[а-яА-ЯёЁa-zA-Z]+$/.test(input.value);
+        }
+
+        close.addEventListener('click', () => {
+            overlay.classList.remove('_sending');
+        });
+
+        btnError.addEventListener('click', () => {
+            overlay.classList.remove('_sending');
+        });
