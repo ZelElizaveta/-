@@ -1,0 +1,25 @@
+ <form action="sendmail.php" class="contacts__form" name="contact-form" id="my-form" method="post">
+        <div class="contacts__input">
+            <input type ="name" id ="name" name = "name" class="_req _name">
+            <label for="name" class ="lng-contacts-label-name">Ваше имя</label>
+            <span id="span-name"></span>
+        </div>
+        <div class="contacts__input">
+            <input type="email" id = "email" name = "email" class="_req _email">
+            <label for="email" class="lng-contacts-email">Ваша почта</label>
+            <span id="span-email"></span>
+        </div>
+        <div class="contacts__textarea">
+            <textarea name="text" id="text" cols="50" rows="5" class="_req _text"></textarea>
+            <label for="text" class="lng-contacts-label-text">Ваше сообщение</label>
+            <span id="span-text"></span>
+        </div>
+        <div class="contacts__triggers">
+            <button type="submit" class="contacts__btn btn lng-contacts-btn" id="btn-contacts">Отправить сообщение</button>
+            <div class="contacts__policy">
+                <input  checked id ="checkbox" type="checkbox" name="checkbox" class="chekbox _req">
+                <label for="checkbox" class="lng-agree"><span>я согласен с </span></label>
+                <a href="privacy.html" class ="lng-policy" target="_blank">политикой конфиденциальности</a> 
+            </div>
+        </div> 
+</form>
